@@ -47,6 +47,8 @@
         default = self.nixosModules.buzz-server;
       };
 
+      clan.modules.buzz-server = import ./modules/buzz-server-clan.nix self;
+
       checks = forAllSystems (pkgs: {
         formatting = treefmtFor.${pkgs.stdenv.hostPlatform.system}.config.build.check self;
 
