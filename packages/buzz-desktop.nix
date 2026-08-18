@@ -18,6 +18,7 @@
   glib-networking,
   gtk3,
   libayatana-appindicator,
+  libopus,
   libsoup_3,
   openssl,
   webkitgtk_4_1,
@@ -31,11 +32,11 @@ let
   sherpaArchives = {
     x86_64-linux = {
       name = "sherpa-onnx-v${sherpaVersion}-linux-x64-static-lib.tar.bz2";
-      hash = "sha256-mLDjGZZCb254JE284ZVVSPLGTo8BxL51uFr3zaoujVw=";
+      hash = "sha256-dobFTDh6slsTqdsB1HHgPKWk+2aFGnv4XZLoRzZyc9I=";
     };
     aarch64-linux = {
       name = "sherpa-onnx-v${sherpaVersion}-linux-aarch64-static-lib.tar.bz2";
-      hash = "sha256-I7M2Fnh8yUnVsUOOl5RVD4BeIIoBTFwiRUgyB8WLvA8=";
+      hash = "sha256-9DD+zbDTlSjbHUmy4oPcTgt9R4T0H8aOr8stWxhu6hI=";
     };
   };
   sherpaArchive =
@@ -61,7 +62,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   cargoLock = {
     lockFile = "${buzz-source.src}/desktop/src-tauri/Cargo.lock";
-    outputHashes = buzz-source.cargoOutputHashes;
+    outputHashes = buzz-source.desktopCargoOutputHashes;
   };
 
   pnpmDeps = fetchPnpmDeps {
@@ -69,7 +70,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     pnpm = pnpm_11;
     fetcherVersion = 4;
     pnpmWorkspaces = [ "buzz" ];
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    hash = "sha256-MbsnqmAmxTz6Ypr4BcJ6MPi2RSoTOsqFdNb4HFHrWPk=";
   };
 
   pnpmWorkspaces = [ "buzz" ];
@@ -91,6 +92,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     glib-networking
     gtk3
     libayatana-appindicator
+    libopus
     libsoup_3
     openssl
     webkitgtk_4_1
@@ -116,6 +118,13 @@ rustPlatform.buildRustPackage (finalAttrs: {
   '';
 
   doCheck = false;
+
+  # The bundled entry ships an empty `Categories=`, which leaves the app
+  # unsorted in application menus.
+  postInstall = ''
+    substituteInPlace $out/share/applications/Buzz.desktop \
+      --replace-fail 'Categories=' 'Categories=Network;InstantMessaging;Chat;'
+  '';
 
   meta = buzz-source.meta // {
     description = "Buzz desktop app";

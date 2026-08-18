@@ -14,12 +14,20 @@ rec {
     hash = "sha256-kiJqUSzQZw6i9+W62T2lFyiDFwOnOKGXIXvQj4oeQgE=";
   };
 
-  # Output hashes for the git dependencies in both Cargo.lock files. Keyed per
-  # git repository (importCargoLock resolves them through the commit SHA).
-  cargoOutputHashes = {
-    "aws-creds-0.39.1" = "sha256-QAAm1phmeLFtDRgfDCoHijN1ce/rYzh18KziOUbL+hw=";
+  # Output hashes for the git dependencies, keyed per git repository
+  # (importCargoLock resolves them through the commit SHA). A hash without a
+  # matching git dependency is an error, so the two lock files get separate sets.
+  meshLlmOutputHash = {
     "mesh-llm-sdk-0.75.1" = "sha256-RXjmM66u40cxnacbvTtCFJShMK4BM+MHOyJ2vQ7Gw60=";
   };
+
+  # Root workspace Cargo.lock.
+  cargoOutputHashes = meshLlmOutputHash // {
+    "aws-creds-0.39.1" = "sha256-QAAm1phmeLFtDRgfDCoHijN1ce/rYzh18KziOUbL+hw=";
+  };
+
+  # desktop/src-tauri/Cargo.lock.
+  desktopCargoOutputHashes = meshLlmOutputHash;
 
   meta = {
     homepage = "https://github.com/block/buzz";

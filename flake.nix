@@ -33,7 +33,6 @@
         in
         {
           inherit (scope)
-            buzz-source
             buzz-web
             buzz-relay
             buzz-sidecars
