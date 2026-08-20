@@ -7,12 +7,18 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixbot = {
+      url = "github:Mic92/nixbot";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+    };
   };
 
   outputs =
     {
       self,
       nixpkgs,
+      nixbot,
       treefmt-nix,
     }:
     let
@@ -25,6 +31,12 @@
     in
     {
       overlays.default = import ./packages/overlay.nix;
+
+      # nixbot scheduled effects: flake input updates and the upstream pin bump.
+      herculesCI = import ./effects.nix {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        inherit nixbot;
+      };
 
       packages = forAllSystems (
         pkgs:
