@@ -107,6 +107,21 @@ self:
         default = false;
         description = "Require relay membership (`BUZZ_REQUIRE_RELAY_MEMBERSHIP`).";
       };
+
+      settings = lib.mkOption {
+        type = lib.types.attrsOf (
+          lib.types.oneOf [
+            lib.types.str
+            lib.types.int
+            lib.types.bool
+          ]
+        );
+        default = { };
+        example = {
+          RUST_LOG = "info";
+        };
+        description = "Extra relay environment variables, merged into `services.buzz-server.settings`.";
+      };
     };
 
     perInstance =
@@ -205,7 +220,8 @@ self:
               settings = {
                 BUZZ_REQUIRE_AUTH_TOKEN = settings.requireAuthToken;
                 BUZZ_REQUIRE_RELAY_MEMBERSHIP = settings.requireRelayMembership;
-              };
+              }
+              // settings.settings;
             };
           };
       };

@@ -29,7 +29,10 @@ let
       BUZZ_ADMIN_WEB_DIR = if cfg.adminHost == null then null else "${cfg.package.buzz-web}/admin-web";
       BUZZ_ADMIN_HOST = cfg.adminHost;
     }
-    // lib.mapAttrs (_: toString) cfg.settings
+    // lib.mapAttrs (
+      # toString renders false as "", but the relay tests literal "true"/"false"
+      _: v: if lib.isBool v then lib.boolToString v else toString v
+    ) cfg.settings
   );
 
   bindPort = lib.toInt (lib.last (lib.splitString ":" cfg.bindAddress));
