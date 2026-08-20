@@ -16,6 +16,7 @@
   wrapGAppsHook3,
   alsa-lib,
   glib-networking,
+  gst_all_1,
   gtk3,
   libayatana-appindicator,
   libopus,
@@ -90,6 +91,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
   buildInputs = [
     alsa-lib
     glib-networking
+    # webkitgtk resolves its media pipeline through the plugin registry at
+    # runtime; without these the web process finds no appsink/appsrc and the
+    # window stays blank. wrapGAppsHook3 turns them into
+    # GST_PLUGIN_SYSTEM_PATH_1_0.
+    gst_all_1.gstreamer
+    gst_all_1.gst-plugins-base
+    gst_all_1.gst-plugins-good
+    gst_all_1.gst-plugins-bad
+    gst_all_1.gst-libav
     gtk3
     libayatana-appindicator
     libopus
