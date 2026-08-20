@@ -25,7 +25,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       "buzz-web"
       "buzz-admin-web"
     ];
-    hash = "sha256-HyVZItaFVPy/gS8OS7EIUkDPgqots5KlHlqXXrjzv28=";
+    hash = buzz-source.webPnpmHash;
   };
 
   pnpmWorkspaces = [

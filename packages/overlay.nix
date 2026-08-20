@@ -1,7 +1,9 @@
 final: _prev: {
-  buzz-source = final.callPackage ./source.nix { };
-  buzz-web = final.callPackage ./buzz-web.nix { };
-  buzz-relay = final.callPackage ./buzz-relay.nix { };
-  buzz-sidecars = final.callPackage ./buzz-sidecars.nix { };
-  buzz-desktop = final.callPackage ./buzz-desktop.nix { };
+  # The pin lives next to buzz-desktop because `version` is the desktop
+  # release; the other packages are cut from the same commit.
+  buzz-source = final.callPackage ./buzz-desktop/source.nix { };
+  buzz-web = final.callPackage ./buzz-web/package.nix { };
+  buzz-relay = final.callPackage ./buzz-relay/package.nix { };
+  buzz-sidecars = final.callPackage ./buzz-sidecars/package.nix { };
+  buzz-desktop = final.callPackage ./buzz-desktop/package.nix { };
 }

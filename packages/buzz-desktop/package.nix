@@ -71,7 +71,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     pnpm = pnpm_11;
     fetcherVersion = 4;
     pnpmWorkspaces = [ "buzz" ];
-    hash = "sha256-MbsnqmAmxTz6Ypr4BcJ6MPi2RSoTOsqFdNb4HFHrWPk=";
+    hash = buzz-source.desktopPnpmHash;
   };
 
   pnpmWorkspaces = [ "buzz" ];

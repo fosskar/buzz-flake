@@ -29,6 +29,12 @@ rec {
   # desktop/src-tauri/Cargo.lock.
   desktopCargoOutputHashes = meshLlmOutputHash;
 
+  # pnpm store hashes for the two workspaces built from this checkout. They
+  # follow the pin, so they live here rather than in the packages, where the
+  # updater would not be allowed to rewrite them.
+  desktopPnpmHash = "sha256-MbsnqmAmxTz6Ypr4BcJ6MPi2RSoTOsqFdNb4HFHrWPk=";
+  webPnpmHash = "sha256-HyVZItaFVPy/gS8OS7EIUkDPgqots5KlHlqXXrjzv28=";
+
   meta = {
     homepage = "https://github.com/block/buzz";
     license = lib.licenses.asl20;
