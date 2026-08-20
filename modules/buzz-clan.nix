@@ -4,10 +4,10 @@ self:
   _class = "clan.service";
 
   manifest = {
-    name = "buzz-server";
-    description = "run a self-hosted Buzz relay with PostgreSQL, Redis and S3";
+    name = "buzz";
+    description = "self-hosted Buzz relay plus preconfigured desktop clients";
     categories = [ "Web Services" ];
-    readme = builtins.readFile ./buzz-server-clan.md;
+    readme = builtins.readFile ./buzz-clan.md;
   };
 
   roles.server = {
@@ -240,7 +240,7 @@ self:
             assertions = [
               {
                 assertion = lib.length servers == 1;
-                message = "buzz-server: the client role expects exactly one server machine, got ${toString (lib.length servers)}";
+                message = "buzz: the client role expects exactly one server machine, got ${toString (lib.length servers)}";
               }
             ];
 

@@ -1,4 +1,4 @@
-# Buzz server Clan service
+# Buzz Clan service
 
 The `server` role runs one self-hosted Buzz relay. It uses the NixOS module from
 this flake and provisions local PostgreSQL and Redis instances by default.
@@ -10,7 +10,7 @@ Add `buzz-flake` as an input, then declare an instance:
 ```nix
 inventory.instances.buzz = {
   module = {
-    name = "buzz-server";
+    name = "buzz";
     input = "buzz-flake";
   };
 

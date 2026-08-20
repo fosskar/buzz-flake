@@ -82,7 +82,7 @@ services.buzz-server.settings = {
 
 ## Clan service
 
-The flake exports `clan.modules.buzz-server`. The `server` role composes the
+The flake exports `clan.modules.buzz`. The `server` role composes the
 NixOS module and uses Clan vars to prompt for S3 credentials and generate stable
 relay and git-hook secrets.
 
@@ -91,7 +91,7 @@ inputs.buzz-flake.url = "github:fosskar/buzz-flake";
 
 inventory.instances.buzz = {
   module = {
-    name = "buzz-server";
+    name = "buzz";
     input = "buzz-flake";
   };
   roles.server.machines.relay.settings = {
@@ -102,7 +102,7 @@ inventory.instances.buzz = {
 ```
 
 Run `clan vars generate relay` to enter the S3 access key and secret key. See
-[`modules/buzz-server-clan.md`](modules/buzz-server-clan.md) for all role
+[`modules/buzz-clan.md`](modules/buzz-clan.md) for all role
 settings.
 
 ## Development
