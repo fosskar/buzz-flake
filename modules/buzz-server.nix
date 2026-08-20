@@ -121,7 +121,7 @@ in
 
     databaseUrl = lib.mkOption {
       type = lib.types.str;
-      default = "postgres:///buzz?host=/run/postgresql";
+      default = "postgres:///buzz?host=/run/postgresql&user=buzz";
       description = ''
         `DATABASE_URL`. The default connects to a local PostgreSQL over its unix
         socket, which pairs with `database.createLocally`.

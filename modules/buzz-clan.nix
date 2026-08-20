@@ -53,7 +53,7 @@ self:
 
       database.url = lib.mkOption {
         type = lib.types.str;
-        default = "postgres:///buzz?host=/run/postgresql";
+        default = "postgres:///buzz?host=/run/postgresql&user=buzz";
         description = "PostgreSQL connection URL.";
       };
 
