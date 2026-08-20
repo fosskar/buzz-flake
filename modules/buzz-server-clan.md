@@ -18,6 +18,8 @@ inventory.instances.buzz = {
     relayUrl = "wss://buzz.example.com";
     s3.endpoint = "https://s3.example.com";
   };
+
+  roles.client.tags = [ "workstation" ];
 };
 ```
 
@@ -49,3 +51,11 @@ clients.
 - `s3.addressingStyle`: `path` or `virtual-host`. Defaults to `path`.
 - `requireAuthToken`: require authentication tokens. Defaults to `false`.
 - `requireRelayMembership`: require relay membership. Defaults to `false`.
+
+## `client` role
+
+Installs the desktop app with `BUZZ_RELAY_URL` defaulting to the server's
+`relayUrl`, so the app offers this instance's relay instead of the upstream
+default. A user-set `BUZZ_RELAY_URL` still wins. The role has no settings and
+expects exactly one server machine. Identity keys are not managed: they are
+created in the app and stored in the user's keyring.

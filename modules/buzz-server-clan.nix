@@ -210,4 +210,42 @@ self:
           };
       };
   };
+
+  roles.client = {
+    description = "Buzz desktop app, pointed at this instance's relay";
+
+    perInstance =
+      { roles, ... }:
+      {
+        nixosModule =
+          { pkgs, lib, ... }:
+          let
+            servers = lib.attrValues roles.server.machines;
+            relayUrl = (lib.head servers).settings.relayUrl;
+
+            # BUZZ_RELAY_URL is the app's runtime default-relay override
+            # (desktop/src-tauri/src/relay.rs); set-default keeps a user
+            # environment override working.
+            buzz-desktop-configured = pkgs.symlinkJoin {
+              name = "buzz-desktop-configured";
+              paths = [ self.packages.${pkgs.stdenv.hostPlatform.system}.buzz-desktop ];
+              nativeBuildInputs = [ pkgs.makeWrapper ];
+              postBuild = ''
+                wrapProgram "$out/bin/buzz-desktop" \
+                  --set-default BUZZ_RELAY_URL ${lib.escapeShellArg relayUrl}
+              '';
+            };
+          in
+          {
+            assertions = [
+              {
+                assertion = lib.length servers == 1;
+                message = "buzz-server: the client role expects exactly one server machine, got ${toString (lib.length servers)}";
+              }
+            ];
+
+            environment.systemPackages = [ buzz-desktop-configured ];
+          };
+      };
+  };
 }
