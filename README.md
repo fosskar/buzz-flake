@@ -3,7 +3,8 @@
 Nix packaging for [block/buzz](https://github.com/block/buzz): the desktop app,
 the self-hosted relay server, and a NixOS module for the server.
 
-Everything is built from one pinned upstream commit (`packages/source.nix`),
+Everything is built from one pinned upstream commit
+(`packages/buzz-desktop/source.nix`),
 currently the `desktop-v0.5.14` release.
 
 ## Packages
@@ -113,12 +114,19 @@ nix flake check                            # formatting + NixOS module evaluatio
 
 ## Updating
 
-Bump `version`, `rev` and `hash` in `packages/source.nix`, then refresh the
-dependency hashes that change with upstream lockfiles:
+`packages/buzz-desktop/update.sh` moves the pin to the newest `desktop-v*`
+release and refreshes the hashes that follow from it (`src`, both pnpm stores).
+A nixbot schedule runs it through nixfiles' updater, which opens one PR for the
+whole flake; run it by hand with `nix packages/buzz-desktop/update.sh`.
 
-- `pnpmDeps.hash` in `packages/buzz-web.nix` and `packages/buzz-desktop.nix`
-- `cargoOutputHashes` in `packages/source.nix` when a git dependency moves
-- the `sherpa-onnx` archive version and hash in `packages/buzz-desktop.nix`
+Two hashes it deliberately leaves alone, because neither can be derived on one
+builder:
+
+- `cargoOutputHashes` in `packages/buzz-desktop/source.nix` when a git
+  dependency moves — the build fails loudly with the correct hash
+- the `sherpa-onnx` archive version and hashes in
+  `packages/buzz-desktop/package.nix` — the script refuses the bump when
+  `sherpa-onnx-sys` moves in the lockfile
 
 ## License
 
