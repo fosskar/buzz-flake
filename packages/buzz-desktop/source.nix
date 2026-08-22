@@ -3,15 +3,15 @@
 # Single pinned upstream checkout shared by every buzz package. `version` is the
 # desktop release version; the relay is cut from the same commit.
 rec {
-  version = "0.5.17";
+  version = "0.5.18";
 
-  rev = "c3bfd66947978fae93f4cfb46bea98ba20e32ccf";
+  rev = "39f8b46935736334cdd7045a4e4b5d7eb1a33888";
 
   src = fetchFromGitHub {
     owner = "block";
     repo = "buzz";
     inherit rev;
-    hash = "sha256-8RQfMHk2ZDRxFdRmOnAo8fhi8aBYESze2ECnx70OlNg=";
+    hash = "sha256-PaTKCvHSgfWBF8Mp4nCGesk6XVdJplHE+euPb+LAZ9k=";
   };
 
   # Output hashes for the git dependencies, keyed per git repository
