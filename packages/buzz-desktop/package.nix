@@ -24,6 +24,7 @@
   openssl,
   webkitgtk_4_1,
   xdotool,
+  withMeshLlm ? true,
 }:
 
 let
@@ -60,6 +61,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   cargoRoot = "desktop/src-tauri";
   buildAndTestSubdir = "desktop/src-tauri";
+
+  buildFeatures = lib.optionals withMeshLlm [ "mesh-llm" ];
 
   cargoLock = {
     lockFile = "${buzz-source.src}/desktop/src-tauri/Cargo.lock";
