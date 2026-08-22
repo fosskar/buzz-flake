@@ -1,11 +1,12 @@
 # buzz-flake
 
 Nix packaging for [block/buzz](https://github.com/block/buzz): the desktop app,
-the self-hosted relay server, and a NixOS module for the server.
+the self-hosted relay and pairing servers, always-on community agents, and
+NixOS, Home Manager, and Clan modules.
 
 Everything is built from one pinned upstream commit
 (`packages/buzz-desktop/source.nix`),
-currently the `desktop-v0.5.14` release.
+currently the `desktop-v0.5.17` release.
 
 ## Packages
 
@@ -21,7 +22,12 @@ nix run github:fosskar/buzz-flake#buzz-desktop
 nix build github:fosskar/buzz-flake#buzz-relay
 ```
 
-The desktop build fetches the prebuilt `sherpa-onnx` static library archive that
+The desktop build enables the `mesh-llm` feature so **Settings → Compute** can
+share local inference with relay members. Set the package argument
+`withMeshLlm = false` to build the feature-off stubs instead. Its wrapper exposes
+the GCC and Vulkan libraries required by Mesh-LLM's downloaded native runtime.
+
+The build also fetches the prebuilt `sherpa-onnx` static library archive that
 `sherpa-onnx-sys` would otherwise download from its build script; it is pinned by
 hash and passed through `SHERPA_ONNX_ARCHIVE_DIR`.
 
@@ -42,6 +48,14 @@ hash and passed through `SHERPA_ONNX_ARCHIVE_DIR`.
             relayUrl = "wss://buzz.example.com";
             s3.endpoint = "https://s3.example.com";
             environmentFile = "/run/secrets/buzz-relay.env";
+            pairingRelay = {
+              enable = true;
+              bindAddress = "127.0.0.1:5000";
+            };
+            members = {
+              "<operator-pubkey>" = "admin";
+              "<headless-agent-pubkey>" = "member";
+            };
           };
         }
       ];
@@ -69,6 +83,13 @@ embedded migrations at startup (`autoMigrate`).
 - **TLS.** The relay speaks plain HTTP/WebSocket; put a reverse proxy in front
   of `bindAddress` and make `relayUrl` match the public URL, since it is used in
   the NIP-42 authentication challenge.
+- **Pairing proxy route.** When `pairingRelay.enable = true`, route the advertised
+  `pairingRelay.url` (by default `<relayUrl>/pair`) to
+  `pairingRelay.bindAddress`. The sidecar holds pairing events only in memory.
+
+`members` declaratively adds `member` or `admin` pubkeys after relay startup.
+Reconciliation is additive and idempotent: users admitted through invite links
+and manual `buzz-admin add-member` calls are never removed.
 
 Settings without a dedicated option go through `services.buzz-server.settings`,
 which is a plain map of environment variables:
@@ -79,6 +100,36 @@ services.buzz-server.settings = {
   RUST_LOG = "info";
 };
 ```
+
+## Home Manager community agents
+
+`homeModules.buzz-agents` runs always-on `buzz-acp` harnesses as user services.
+Each harness owns the relay connection, author gate, sessions, context, and
+presence, and spawns `buzz-agent` as its ACP model process.
+
+```nix
+{
+  imports = [ inputs.buzz-flake.homeModules.buzz-agents ];
+
+  services.buzz-agents = {
+    enable = true;
+    relayUrl = "wss://buzz.example.com";
+    ownerPubkey = "<operator-pubkey>";
+    openrouterEnvironmentFile = "/run/secrets/openrouter.env";
+    agents.orouter = {
+      displayName = "ORouter";
+      model = "deepseek/deepseek-v4-flash-0731";
+      systemPrompt = "test agent";
+      privateKeyFile = "/run/secrets/orouter.env";
+      respondTo = "anyone";
+    };
+  };
+}
+```
+
+The common environment file supplies `OPENROUTER_API_KEY`; each agent file
+supplies `BUZZ_PRIVATE_KEY`. `respondTo = "anyone"` means every identity admitted
+by a closed relay. Other modes are `owner-only`, `allowlist`, and `nobody`.
 
 ## Clan service
 
@@ -97,6 +148,8 @@ inventory.instances.buzz = {
   roles.server.machines.relay.settings = {
     relayUrl = "wss://buzz.example.com";
     s3.endpoint = "https://s3.example.com";
+    pairingRelay.enable = true;
+    members."<operator-pubkey>" = "admin";
   };
 };
 ```

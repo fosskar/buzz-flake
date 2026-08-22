@@ -59,6 +59,8 @@
         default = self.nixosModules.buzz-server;
       };
 
+      homeModules.buzz-agents = import ./modules/buzz-agents.nix self;
+
       clan.modules.buzz = import ./modules/buzz-clan.nix self;
 
       checks = forAllSystems (pkgs: {
