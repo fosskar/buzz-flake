@@ -24,6 +24,7 @@
   openssl,
   webkitgtk_4_1,
   xdotool,
+  vulkan-loader,
   withMeshLlm ? true,
 }:
 
@@ -131,6 +132,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
   '';
 
   doCheck = false;
+
+  preFixup = lib.optionalString withMeshLlm ''
+    gappsWrapperArgs+=(
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [
+        stdenv.cc.cc.lib
+        vulkan-loader
+      ]}"
+    )
+  '';
 
   # The bundled entry ships an empty `Categories=`, which leaves the app
   # unsorted in application menus.
