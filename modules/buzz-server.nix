@@ -227,6 +227,26 @@ in
       default = false;
       description = "Open the port from `bindAddress` in the firewall.";
     };
+
+    members = lib.mkOption {
+      type = lib.types.attrsOf (
+        lib.types.enum [
+          "member"
+          "admin"
+        ]
+      );
+      default = { };
+      example = {
+        "1c9f5bb1b4adb233b8c383c1ee98cf40a90d6194d63bee11e6d332955836e6a2" = "admin";
+      };
+      description = ''
+        Declarative relay membership: pubkey (bech32 npub or 64-char hex) to
+        role. Reconciled additively after every relay start via
+        `buzz-admin add-member`, which is idempotent. Members added manually
+        are never removed; the relay owner is set with `RELAY_OWNER_PUBKEY`
+        in `settings`, not here.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -263,6 +283,43 @@ in
     };
 
     networking.firewall.allowedTCPPorts = lib.mkIf cfg.openFirewall [ bindPort ];
+
+    systemd.services.buzz-members = lib.mkIf (cfg.members != { }) {
+      description = "Reconcile declarative Buzz relay members";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "buzz-relay.service" ];
+      requires = [ "buzz-relay.service" ];
+
+      inherit environment;
+
+      serviceConfig = {
+        Type = "oneshot";
+        User = cfg.user;
+        Group = cfg.group;
+        EnvironmentFile = lib.mkIf (cfg.environmentFile != null) cfg.environmentFile;
+      };
+
+      # the relay seeds the community mapping during startup, after the unit
+      # is already active, so the first attempts can race it
+      script = ''
+        reconcile() {
+          ${lib.concatStringsSep " &&\n          " (
+            lib.mapAttrsToList (
+              pubkey: role:
+              "${lib.getExe' cfg.package "buzz-admin"} add-member --pubkey ${lib.escapeShellArg pubkey} --role ${role}"
+            ) cfg.members
+          )}
+        }
+        for _ in $(seq 60); do
+          if reconcile; then
+            exit 0
+          fi
+          sleep 2
+        done
+        echo "buzz-members: giving up after 120s" >&2
+        exit 1
+      '';
+    };
 
     systemd.services.buzz-relay = {
       description = "Buzz relay server";

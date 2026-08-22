@@ -122,6 +122,17 @@ self:
         };
         description = "Extra relay environment variables, merged into `services.buzz-server.settings`.";
       };
+
+      members = lib.mkOption {
+        type = lib.types.attrsOf (
+          lib.types.enum [
+            "member"
+            "admin"
+          ]
+        );
+        default = { };
+        description = "Declarative relay members (pubkey to role), merged into `services.buzz-server.members`.";
+      };
     };
 
     perInstance =
@@ -213,6 +224,7 @@ self:
                 ;
               databaseUrl = settings.database.url;
               redisUrl = settings.redis.url;
+              inherit (settings) members;
               database.createLocally = settings.database.createLocally;
               redis.createLocally = settings.redis.createLocally;
               inherit (settings) s3;
