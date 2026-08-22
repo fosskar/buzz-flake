@@ -19,6 +19,7 @@ let
       DATABASE_URL = cfg.databaseUrl;
       REDIS_URL = cfg.redisUrl;
       RELAY_URL = cfg.relayUrl;
+      BUZZ_PAIRING_RELAY_URL = if cfg.pairingRelay.enable then cfg.pairingRelay.url else null;
       BUZZ_AUTO_MIGRATE = lib.boolToString cfg.autoMigrate;
       BUZZ_GIT_REPO_PATH = "${cfg.stateDir}/repos";
       BUZZ_S3_ENDPOINT = cfg.s3.endpoint;
@@ -95,6 +96,23 @@ in
         against this value during NIP-42 authentication, so it must match the
         URL they connect to.
       '';
+    };
+
+    pairingRelay = {
+      enable = lib.mkEnableOption "the Buzz device-pairing relay";
+
+      bindAddress = lib.mkOption {
+        type = lib.types.str;
+        default = "127.0.0.1:5000";
+        description = "`BUZZ_PAIR_RELAY_BIND_ADDR`: address the pairing WebSocket listens on.";
+      };
+
+      url = lib.mkOption {
+        type = lib.types.str;
+        default = "${lib.removeSuffix "/" cfg.relayUrl}/pair";
+        defaultText = lib.literalExpression ''"\${lib.removeSuffix "/" config.services.buzz-server.relayUrl}/pair"'';
+        description = "`BUZZ_PAIRING_RELAY_URL`: public pairing WebSocket URL advertised in NIP-11.";
+      };
     };
 
     adminHost = lib.mkOption {
@@ -319,6 +337,45 @@ in
         echo "buzz-members: giving up after 120s" >&2
         exit 1
       '';
+    };
+
+    systemd.services.buzz-pair-relay = lib.mkIf cfg.pairingRelay.enable {
+      description = "Buzz device-pairing relay";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network-online.target" ];
+      wants = [ "network-online.target" ];
+      environment.BUZZ_PAIR_RELAY_BIND_ADDR = cfg.pairingRelay.bindAddress;
+
+      serviceConfig = {
+        ExecStart = lib.getExe' cfg.package "buzz-pair-relay";
+        User = cfg.user;
+        Group = cfg.group;
+        Restart = "on-failure";
+        RestartSec = 5;
+        CapabilityBoundingSet = "";
+        LockPersonality = true;
+        MemoryDenyWriteExecute = true;
+        NoNewPrivileges = true;
+        PrivateDevices = true;
+        PrivateTmp = true;
+        ProtectClock = true;
+        ProtectControlGroups = true;
+        ProtectHome = true;
+        ProtectHostname = true;
+        ProtectKernelLogs = true;
+        ProtectKernelModules = true;
+        ProtectKernelTunables = true;
+        ProtectSystem = "strict";
+        RestrictAddressFamilies = [
+          "AF_INET"
+          "AF_INET6"
+        ];
+        RestrictNamespaces = true;
+        RestrictRealtime = true;
+        RestrictSUIDSGID = true;
+        SystemCallArchitectures = "native";
+        UMask = "0077";
+      };
     };
 
     systemd.services.buzz-relay = {

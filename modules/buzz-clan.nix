@@ -26,6 +26,22 @@ self:
         description = "Address the WebSocket and REST API listen on.";
       };
 
+      pairingRelay = {
+        enable = lib.mkEnableOption "the Buzz device-pairing relay";
+
+        bindAddress = lib.mkOption {
+          type = lib.types.str;
+          default = "127.0.0.1:5000";
+          description = "Address the pairing WebSocket listens on.";
+        };
+
+        url = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          description = "Public pairing WebSocket URL; defaults to <relayUrl>/pair.";
+        };
+      };
+
       adminHost = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
@@ -225,6 +241,12 @@ self:
               databaseUrl = settings.database.url;
               redisUrl = settings.redis.url;
               inherit (settings) members;
+              pairingRelay = {
+                inherit (settings.pairingRelay) enable bindAddress;
+              }
+              // lib.optionalAttrs (settings.pairingRelay.url != null) {
+                inherit (settings.pairingRelay) url;
+              };
               database.createLocally = settings.database.createLocally;
               redis.createLocally = settings.redis.createLocally;
               inherit (settings) s3;
