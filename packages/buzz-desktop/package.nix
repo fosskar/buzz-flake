@@ -135,10 +135,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   preFixup = lib.optionalString withMeshLlm ''
     gappsWrapperArgs+=(
-      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [
-        stdenv.cc.cc.lib
-        vulkan-loader
-      ]}"
+      --prefix LD_LIBRARY_PATH : "${
+        lib.makeLibraryPath [
+          stdenv.cc.cc.lib
+          vulkan-loader
+        ]
+      }"
     )
   '';
 

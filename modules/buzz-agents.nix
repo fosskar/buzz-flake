@@ -56,6 +56,28 @@ let
   mkService =
     name: agent:
     let
+      agentEnvironment = {
+        BUZZ_RELAY_URL = cfg.relayUrl;
+        BUZZ_ACP_AGENT_COMMAND = lib.getExe' cfg.package "buzz-agent";
+        BUZZ_ACP_AGENT_ARGS = "";
+        BUZZ_ACP_AGENT_OWNER = cfg.ownerPubkey;
+        BUZZ_ACP_RESPOND_TO = agent.respondTo;
+        BUZZ_ACP_ALLOWED_RESPOND_TO = agent.respondTo;
+        BUZZ_ACP_AGENTS = toString agent.parallelAgents;
+        BUZZ_AGENT_PROVIDER = "openrouter";
+        BUZZ_AGENT_MODEL = agent.model;
+        BUZZ_AGENT_SYSTEM_PROMPT = agent.systemPrompt;
+      }
+      // lib.optionalAttrs (agent.allowedUsers != [ ]) {
+        BUZZ_ACP_RESPOND_TO_ALLOWLIST = lib.concatStringsSep "," agent.allowedUsers;
+      }
+      // agent.environment;
+      agentEnvironmentFile = pkgs.writeText "buzz-agent-${name}.env" (
+        lib.concatStringsSep "\n" (
+          lib.mapAttrsToList (key: value: "${key}=${lib.escapeShellArg value}") agentEnvironment
+        )
+        + "\n"
+      );
       profile = pkgs.writeShellScript "buzz-agent-${name}-profile" ''
         exec ${lib.getExe' cfg.package "buzz"} users set-profile \
           --name ${lib.escapeShellArg agent.displayName} \
@@ -72,25 +94,10 @@ let
         ExecStartPre = toString profile;
         ExecStart = lib.getExe' cfg.package "buzz-acp";
         EnvironmentFile = [
+          agentEnvironmentFile
           cfg.openrouterEnvironmentFile
           agent.privateKeyFile
         ];
-        Environment = lib.mapAttrsToList (key: value: "${key}=${value}") (
-          {
-            BUZZ_RELAY_URL = cfg.relayUrl;
-            BUZZ_ACP_AGENT_COMMAND = lib.getExe' cfg.package "buzz-agent";
-            BUZZ_ACP_AGENT_ARGS = "";
-            BUZZ_ACP_AGENT_OWNER = cfg.ownerPubkey;
-            BUZZ_ACP_RESPOND_TO = agent.respondTo;
-            BUZZ_ACP_ALLOWED_RESPOND_TO = agent.respondTo;
-            BUZZ_ACP_RESPOND_TO_ALLOWLIST = lib.concatStringsSep "," agent.allowedUsers;
-            BUZZ_ACP_AGENTS = toString agent.parallelAgents;
-            BUZZ_AGENT_PROVIDER = "openrouter";
-            BUZZ_AGENT_MODEL = agent.model;
-            BUZZ_AGENT_SYSTEM_PROMPT = agent.systemPrompt;
-          }
-          // agent.environment
-        );
         Restart = "always";
         RestartSec = 5;
         WorkingDirectory = "%S/buzz-agents/${name}";
@@ -126,9 +133,8 @@ in
   };
 
   config.systemd.user.services = lib.mkIf cfg.enable (
-    lib.mapAttrs' (
-      name: agent:
-      lib.nameValuePair "buzz-agent-${name}" (mkService name agent)
-    ) (lib.filterAttrs (_: agent: agent.enable) cfg.agents)
+    lib.mapAttrs' (name: agent: lib.nameValuePair "buzz-agent-${name}" (mkService name agent)) (
+      lib.filterAttrs (_: agent: agent.enable) cfg.agents
+    )
   );
 }
