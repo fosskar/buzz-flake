@@ -133,7 +133,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   doCheck = false;
 
-  preFixup = lib.optionalString withMeshLlm ''
+  preFixup = ''
+    gappsWrapperArgs+=(--add-flags --safe-rendering)
+  ''
+  + lib.optionalString withMeshLlm ''
     gappsWrapperArgs+=(
       --prefix LD_LIBRARY_PATH : "${
         lib.makeLibraryPath [
