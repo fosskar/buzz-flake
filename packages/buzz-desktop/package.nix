@@ -133,8 +133,13 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   doCheck = false;
 
+  # What `--safe-rendering` sets. The flag itself cannot be used: the bundled
+  # sidecars share this wrapper and buzz-acp rejects unknown arguments.
   preFixup = ''
-    gappsWrapperArgs+=(--add-flags --safe-rendering)
+    gappsWrapperArgs+=(
+      --set-default WEBKIT_DMABUF_RENDERER_FORCE_SHM 1
+      --set-default WEBKIT_DISABLE_COMPOSITING_MODE 1
+    )
   ''
   + lib.optionalString withMeshLlm ''
     gappsWrapperArgs+=(
