@@ -60,13 +60,16 @@ let
         BUZZ_RELAY_URL = cfg.relayUrl;
         BUZZ_ACP_AGENT_COMMAND = lib.getExe' cfg.package "buzz-agent";
         BUZZ_ACP_AGENT_ARGS = "";
-        BUZZ_ACP_AGENT_OWNER = cfg.ownerPubkey;
+        BUZZ_ACP_MCP_COMMAND = lib.getExe' cfg.package "buzz-dev-mcp";
         BUZZ_ACP_RESPOND_TO = agent.respondTo;
         BUZZ_ACP_ALLOWED_RESPOND_TO = agent.respondTo;
         BUZZ_ACP_AGENTS = toString agent.parallelAgents;
         BUZZ_AGENT_PROVIDER = "openrouter";
         BUZZ_AGENT_MODEL = agent.model;
         BUZZ_AGENT_SYSTEM_PROMPT = agent.systemPrompt;
+      }
+      // lib.optionalAttrs (cfg.ownerPubkey != null) {
+        BUZZ_ACP_AGENT_OWNER = cfg.ownerPubkey;
       }
       // lib.optionalAttrs (agent.allowedUsers != [ ]) {
         BUZZ_ACP_RESPOND_TO_ALLOWLIST = lib.concatStringsSep "," agent.allowedUsers;
@@ -120,7 +123,9 @@ in
       type = lib.types.str;
     };
     ownerPubkey = lib.mkOption {
-      type = lib.types.str;
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "NIP-OA owner pubkey for owner-gated responses and agent metrics.";
     };
     openrouterEnvironmentFile = lib.mkOption {
       type = lib.types.str;
