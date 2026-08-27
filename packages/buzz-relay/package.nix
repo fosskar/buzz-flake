@@ -21,6 +21,8 @@ rustPlatform.buildRustPackage (_finalAttrs: {
     outputHashes = buzz-source.cargoOutputHashes;
   };
 
+  patches = [ ./retry-postgres-startup.patch ];
+
   nativeBuildInputs = [
     cmake
     pkg-config

@@ -1,0 +1,39 @@
+--- a/crates/buzz-relay/src/main.rs
++++ b/crates/buzz-relay/src/main.rs
+@@ -171,10 +171,32 @@
+         read_max_connections: config.db_read_pool_size,
+         ..DbConfig::default()
+     };
+-    let db = Db::new(&db_config).await.map_err(|e| {
+-        error!("Failed to connect to Postgres: {e}");
+-        anyhow::anyhow!("DB connection failed: {e}")
+-    })?;
++    let db = {
++        const MAX_ATTEMPTS: u32 = 6;
++        const RETRY_DELAY: std::time::Duration = std::time::Duration::from_secs(5);
++
++        let mut attempt = 1;
++        loop {
++            match Db::new(&db_config).await {
++                Ok(db) => break db,
++                Err(error) if attempt < MAX_ATTEMPTS => {
++                    warn!(
++                        attempt,
++                        max_attempts = MAX_ATTEMPTS,
++                        retry_delay_secs = RETRY_DELAY.as_secs(),
++                        %error,
++                        "Postgres connection failed; retrying"
++                    );
++                    attempt += 1;
++                    tokio::time::sleep(RETRY_DELAY).await;
++                }
++                Err(error) => {
++                    error!(%error, "Failed to connect to Postgres");
++                    return Err(anyhow::anyhow!("DB connection failed: {error}"));
++                }
++            }
++        }
++    };
+     if db.has_read_pool() {
+         info!("Postgres connected (writer + lazy read replica pool)");
+         // Reader-down at boot must not crash or block the relay; this warn-only
