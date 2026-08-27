@@ -4,15 +4,11 @@ Nix packaging for [block/buzz](https://github.com/block/buzz): the desktop app,
 the self-hosted relay and pairing servers, always-on community agents, and
 NixOS, Home Manager, and Clan modules.
 
-Everything is built from one pinned upstream commit
-(`packages/buzz-desktop/source.nix`),
-currently the `desktop-v0.5.17` release.
-
 ## Packages
 
 | Attribute | Contents |
 | --------------- | ----------------------------------------------------------------------------------------------------------- |
-| `buzz-relay` | `buzz-relay`, `buzz-admin` and `buzz-pair-relay`, wrapped with `git` on `PATH` and the web bundles preconfigured |
+| `buzz-relay` | `buzz-relay` with `git` on `PATH` and the web bundles preconfigured, plus `buzz-admin` and `buzz-pair-relay` |
 | `buzz-web` | The `web` and `admin-web` static bundles the relay serves |
 | `buzz-sidecars` | `buzz-acp`, `buzz-agent`, `buzz-backend-kubernetes`, `buzz-dev-mcp`, `git-credential-nostr` and `buzz` |
 | `buzz-desktop` | The Tauri desktop app, with the sidecar binaries bundled |
@@ -26,10 +22,6 @@ The desktop build enables the `mesh-llm` feature so **Settings → Compute** can
 share local inference with relay members. Set the package argument
 `withMeshLlm = false` to build the feature-off stubs instead. Its wrapper exposes
 the GCC and Vulkan libraries required by Mesh-LLM's downloaded native runtime.
-
-The build also fetches the prebuilt `sherpa-onnx` static library archive that
-`sherpa-onnx-sys` would otherwise download from its build script; it is pinned by
-hash and passed through `SHERPA_ONNX_ARCHIVE_DIR`.
 
 ## NixOS module
 
@@ -170,7 +162,7 @@ nix flake check                            # formatting + NixOS module evaluatio
 `packages/buzz-desktop/update.sh` moves the pin to the newest `desktop-v*`
 release and refreshes the hashes that follow from it (`src`, both pnpm stores).
 A nixbot schedule runs it through nixfiles' updater, which opens one PR for the
-whole flake; run it by hand with `nix packages/buzz-desktop/update.sh`.
+whole flake; run it by hand with `./packages/buzz-desktop/update.sh`.
 
 Two hashes it deliberately leaves alone, because neither can be derived on one
 builder:
@@ -180,7 +172,3 @@ builder:
 - the `sherpa-onnx` archive version and hashes in
   `packages/buzz-desktop/package.nix` — the script refuses the bump when
   `sherpa-onnx-sys` moves in the lockfile
-
-## License
-
-The packaging in this repository is MIT-licensed. Buzz itself is Apache-2.0.
