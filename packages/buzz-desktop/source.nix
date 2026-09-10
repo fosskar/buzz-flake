@@ -3,15 +3,15 @@
 # Single pinned upstream checkout shared by every buzz package. `version` is the
 # desktop release version; the relay is cut from the same commit.
 rec {
-  version = "0.5.20";
+  version = "0.5.23";
 
-  rev = "95154bee4034ca7a40b33095c2ddbde8c9aa1614";
+  rev = "b9392d9d78744df365f9276e1ffe8c1baa5ea903";
 
   src = fetchFromGitHub {
     owner = "block";
     repo = "buzz";
     inherit rev;
-    hash = "sha256-+5fdFmxB9TOgYoeJrEs2FCYldku4OyEJVrpdC/FYRFQ=";
+    hash = "sha256-Mw8NXYLbLy9idH+doY287Mm3WuEXvAeO1B3H162rE70=";
   };
 
   # Output hashes for the git dependencies, keyed per git repository
@@ -32,8 +32,8 @@ rec {
   # pnpm store hashes for the two workspaces built from this checkout. They
   # follow the pin, so they live here rather than in the packages, where the
   # updater would not be allowed to rewrite them.
-  desktopPnpmHash = "sha256-Pgp6+0qjyhbOY7ghK8TuDi9TJoCDZJS68vdHYDgxot4=";
-  webPnpmHash = "sha256-ECW0U2lmBzueq4QS33/lfAuO1VqulRMw2LttbSh8fMo=";
+  desktopPnpmHash = "sha256-KEe9dxmIlwPeLpnTkrwJOd64gAGC/PxOBqMOVGbKyJs=";
+  webPnpmHash = "sha256-cwAQL8d1CHcbRgnuUrSPt4Wux/fYsV2wnPjTbTotxCk=";
 
   meta = {
     homepage = "https://github.com/block/buzz";
