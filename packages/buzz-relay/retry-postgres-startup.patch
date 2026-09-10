@@ -1,9 +1,9 @@
 --- a/crates/buzz-relay/src/main.rs
 +++ b/crates/buzz-relay/src/main.rs
-@@ -171,10 +171,32 @@
-         read_max_connections: config.db_read_pool_size,
+@@ -256,10 +256,32 @@ async fn run_relay_main(boot: BootTracker) -> anyhow::Result<()> {
          ..DbConfig::default()
-     };
+     }
+     .with_session_timeouts_from_env();
 -    let db = Db::new(&db_config).await.map_err(|e| {
 -        error!("Failed to connect to Postgres: {e}");
 -        anyhow::anyhow!("DB connection failed: {e}")
