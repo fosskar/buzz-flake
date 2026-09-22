@@ -1,9 +1,6 @@
 --- a/crates/buzz-relay/src/main.rs
 +++ b/crates/buzz-relay/src/main.rs
-@@ -256,10 +256,32 @@ async fn run_relay_main(boot: BootTracker) -> anyhow::Result<()> {
-         ..DbConfig::default()
-     }
-     .with_session_timeouts_from_env();
+@@ -174,7 +174,29 @@
 -    let db = Db::new(&db_config).await.map_err(|e| {
 -        error!("Failed to connect to Postgres: {e}");
 -        anyhow::anyhow!("DB connection failed: {e}")
