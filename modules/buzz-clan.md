@@ -35,6 +35,8 @@ clients.
 
 ## `server` settings
 
+- `channel`: `release` (pinned desktop release) or `main` (`buzz-relay-main`,
+  built from `block/buzz` main). Defaults to `release`.
 - `relayUrl`: public WebSocket URL; required.
 - `bindAddress`: API listen address. Defaults to `127.0.0.1:3000`.
 - `adminHost`: bare authority that enables the admin UI. Defaults to `null`.
@@ -56,6 +58,7 @@ clients.
 
 Installs the desktop app with `BUZZ_RELAY_URL` defaulting to the server's
 `relayUrl`, so the app offers this instance's relay instead of the upstream
-default. A user-set `BUZZ_RELAY_URL` still wins. The role has no settings and
-expects exactly one server machine. Identity keys are not managed: they are
+default. A user-set `BUZZ_RELAY_URL` still wins. The only setting is
+`channel` (`release` or `main`, as for the server role). The role expects
+exactly one server machine. Identity keys are not managed: they are
 created in the app and stored in the user's keyring.
