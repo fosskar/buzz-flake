@@ -1,14 +1,14 @@
 { lib, fetchFromGitHub }:
 
 rec {
-  version = "0.5.23-unstable-2026-09-21";
-  rev = "77729abfb692b25a0f4ec4a69add86af2e32c0dd";
+  version = "0.5.24-unstable-2026-09-23";
+  rev = "ec7ea38f62ea917f15e85a678bc94f3bbee5bb64";
 
   src = fetchFromGitHub {
     owner = "block";
     repo = "buzz";
     inherit rev;
-    hash = "sha256-RNoSsS0eiFM3+EDcK+FVBEjiouL3kM1lRvZ1p222PZk=";
+    hash = "sha256-swBon8daznDgTYK1PH7DoCW3/r4kJiD19/3stpZlRSQ=";
   };
 
   desktopCargoOutputHashes = {
