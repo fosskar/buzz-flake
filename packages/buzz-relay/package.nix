@@ -16,10 +16,7 @@ rustPlatform.buildRustPackage (_finalAttrs: {
   pname = "buzz-relay";
   inherit (buzz-source) version src;
 
-  cargoLock = {
-    lockFile = "${buzz-source.src}/Cargo.lock";
-    outputHashes = buzz-source.cargoOutputHashes;
-  };
+  inherit (buzz-source) cargoHash;
 
   patches = [ ./retry-postgres-startup.patch ];
 

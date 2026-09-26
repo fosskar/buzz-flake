@@ -14,10 +14,7 @@ rustPlatform.buildRustPackage (_finalAttrs: {
   pname = "buzz-sidecars";
   inherit (buzz-source) version src;
 
-  cargoLock = {
-    lockFile = "${buzz-source.src}/Cargo.lock";
-    outputHashes = buzz-source.cargoOutputHashes;
-  };
+  inherit (buzz-source) cargoHash;
 
   nativeBuildInputs = [
     cmake

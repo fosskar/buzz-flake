@@ -167,8 +167,9 @@ whole flake; run it by hand with `./packages/buzz-desktop/update.sh`.
 Two hashes it deliberately leaves alone, because neither can be derived on one
 builder:
 
-- `cargoOutputHashes` in `packages/buzz-desktop/source.nix` when a git
-  dependency moves — the build fails loudly with the correct hash
+- `cargoHash` (root workspace) and `desktopCargoOutputHashes` (Tauri
+  workspace) in `packages/buzz-desktop/source.nix` — the build fails loudly
+  with the correct hash
 - the `sherpa-onnx` archive version and hashes in
   `packages/buzz-desktop/package.nix` — the script refuses the bump when
   `sherpa-onnx-sys` moves in the lockfile
