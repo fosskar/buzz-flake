@@ -14,15 +14,6 @@ self:
     description = "Buzz relay server";
 
     interface.options = {
-      channel = lib.mkOption {
-        type = lib.types.enum [
-          "release"
-          "main"
-        ];
-        default = "release";
-        description = "Build the relay from the pinned desktop release or from block/buzz main (`buzz-relay-main`).";
-      };
-
       relayUrl = lib.mkOption {
         type = lib.types.str;
         example = "wss://buzz.example.com";
@@ -176,10 +167,6 @@ self:
           let
             generatorName = "buzz-server-${instanceName}";
             generator = config.clan.core.vars.generators.${generatorName};
-            relayPackage =
-              self.packages.${pkgs.stdenv.hostPlatform.system}.${
-                if settings.channel == "main" then "buzz-relay-main" else "buzz-relay"
-              };
           in
           {
             imports = [ self.nixosModules.buzz-server ];
@@ -205,14 +192,16 @@ self:
               };
 
               runtimeInputs = [
-                relayPackage
+                self.packages.${pkgs.stdenv.hostPlatform.system}.buzz-relay
                 pkgs.gnused
                 pkgs.openssl
                 pkgs.python3
               ];
 
               script = ''
-                relay_private_key="$(${lib.getExe' relayPackage "buzz-admin"} generate-key | sed -n 's/^Secret key:  *//p')"
+                relay_private_key="$(${
+                  lib.getExe' self.packages.${pkgs.stdenv.hostPlatform.system}.buzz-relay "buzz-admin"
+                } generate-key | sed -n 's/^Secret key:  *//p')"
                 test -n "$relay_private_key"
                 git_hmac_secret="$(openssl rand -hex 32)"
 
@@ -242,7 +231,6 @@ self:
 
             services.buzz-server = {
               enable = true;
-              package = relayPackage;
               inherit (settings)
                 relayUrl
                 bindAddress
@@ -276,17 +264,8 @@ self:
   roles.client = {
     description = "Buzz desktop app, pointed at this instance's relay";
 
-    interface.options.channel = lib.mkOption {
-      type = lib.types.enum [
-        "release"
-        "main"
-      ];
-      default = "release";
-      description = "Build the desktop app from the pinned release or from block/buzz main (`buzz-desktop-main`).";
-    };
-
     perInstance =
-      { roles, settings, ... }:
+      { roles, ... }:
       {
         nixosModule =
           { pkgs, lib, ... }:
@@ -299,11 +278,7 @@ self:
             # environment override working.
             buzz-desktop-configured = pkgs.symlinkJoin {
               name = "buzz-desktop-configured";
-              paths = [
-                self.packages.${pkgs.stdenv.hostPlatform.system}.${
-                  if settings.channel == "main" then "buzz-desktop-main" else "buzz-desktop"
-                }
-              ];
+              paths = [ self.packages.${pkgs.stdenv.hostPlatform.system}.buzz-desktop ];
               nativeBuildInputs = [ pkgs.makeWrapper ];
               postBuild = ''
                 wrapProgram "$out/bin/buzz-desktop" \
