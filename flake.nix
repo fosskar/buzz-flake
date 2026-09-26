@@ -49,10 +49,6 @@
             buzz-relay
             buzz-sidecars
             buzz-desktop
-            buzz-web-main
-            buzz-relay-main
-            buzz-sidecars-main
-            buzz-desktop-main
             ;
           default = scope.buzz-relay;
         }
