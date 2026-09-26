@@ -61,6 +61,7 @@ let
         BUZZ_ACP_AGENT_COMMAND = lib.getExe' cfg.package "buzz-agent";
         BUZZ_ACP_AGENT_ARGS = "";
         BUZZ_ACP_MCP_COMMAND = lib.getExe' cfg.package "buzz-dev-mcp";
+        BUZZ_ACP_DISPLAY_NAME = agent.displayName;
         BUZZ_ACP_RESPOND_TO = agent.respondTo;
         BUZZ_ACP_ALLOWED_RESPOND_TO = agent.respondTo;
         BUZZ_ACP_AGENTS = toString agent.parallelAgents;
