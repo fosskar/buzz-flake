@@ -65,10 +65,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   buildFeatures = lib.optionals withMeshLlm [ "mesh-llm" ];
 
-  cargoLock = {
-    lockFile = "${buzz-source.src}/desktop/src-tauri/Cargo.lock";
-    outputHashes = buzz-source.desktopCargoOutputHashes;
-  };
+  cargoHash = buzz-source.desktopCargoHash;
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;

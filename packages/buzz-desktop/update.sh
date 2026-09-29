@@ -56,22 +56,27 @@ if [[ $locked_sherpa != "$pinned_sherpa" ]]; then
 fi
 
 # Fixed-output rebuild: plant a wrong hash, read the real one off the failure.
-# Both pnpm hashes live in source.nix, the one file this updater owns.
-refresh_pnpm_hash() {
-  local attr="$1" old new log
-  old="$(nix eval --raw "$REPO_ROOT#$attr.pnpmDeps.outputHash")"
-  new="sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
-  sed -i "s|$old|$new|" "$source_nix"
-  log="$(nix build "$REPO_ROOT#$attr.pnpmDeps" --no-link 2>&1 || true)"
-  if ! grep -q "got:" <<<"$log"; then
-    sed -i "s|$new|$old|" "$source_nix"
-    echo "$attr: pnpm deps failed to fetch" >&2
-    exit 1
-  fi
-  sed -i "s|$new|$(grep -oP 'got:\s+\K\S+' <<<"$log" | tail -1)|" "$source_nix"
+# All dependency hashes live in source.nix, the one file this updater owns.
+set_hash() {
+  sed -i "s|^\([[:space:]]*\)$1 = \".*\";|\1$1 = \"$2\";|" "$source_nix"
 }
 
-refresh_pnpm_hash buzz-desktop
-refresh_pnpm_hash buzz-web
+refresh_hash() {
+  local name="$1" deps="$2" old log
+  old="$(sed -n "s/^[[:space:]]*$name = \"\(.*\)\";.*/\1/p" "$source_nix")"
+  set_hash "$name" "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+  log="$(nix build "$REPO_ROOT#$deps" --no-link 2>&1 || true)"
+  if ! grep -q "got:" <<<"$log"; then
+    set_hash "$name" "$old"
+    echo "$deps: failed to fetch" >&2
+    exit 1
+  fi
+  set_hash "$name" "$(grep -oP 'got:\s+\K\S+' <<<"$log" | tail -1)"
+}
+
+refresh_hash cargoHash buzz-relay.cargoDeps
+refresh_hash desktopCargoHash buzz-desktop.cargoDeps
+refresh_hash desktopPnpmHash buzz-desktop.pnpmDeps
+refresh_hash webPnpmHash buzz-web.pnpmDeps
 
 echo ":: buzz $current -> $latest"

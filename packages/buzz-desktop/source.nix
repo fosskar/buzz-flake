@@ -20,10 +20,10 @@ rec {
   # directories by name-version only.
   cargoHash = "sha256-TOJmGcR2HHrO1MDLH4ALmETG1s07VN0ZLwJcSuJYLdY=";
 
-  # desktop/src-tauri/Cargo.lock: output hash for its git dependency.
-  desktopCargoOutputHashes = {
-    "mesh-llm-sdk-0.76.2" = "sha256-xbyNjc2oInEkmQWkGDAslCM/cNhAVjE4xcpVLFixlLE=";
-  };
+  # desktop/src-tauri/Cargo.lock, also vendored with fetchCargoVendor: the
+  # outputHashes importCargoLock needs are keyed by git dependency names that
+  # move with upstream, which the updater cannot track.
+  desktopCargoHash = "sha256-ILrm3qcFmU0OVhSHZWi1vA6sG742wn5rFymv9ig3s4M=";
 
   # pnpm store hashes for the two workspaces built from this checkout. They
   # follow the pin, so they live here rather than in the packages, where the
