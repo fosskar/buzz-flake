@@ -3,27 +3,27 @@
 # Single pinned upstream checkout shared by every buzz package. `version` is the
 # desktop release version; the relay is cut from the same commit.
 rec {
-  version = "0.5.25";
+  version = "0.5.26";
 
-  rev = "c8f73213089cbd5a0f1e675d3193558280d46e10";
+  rev = "2b4b138dc5cf2d9cc1a0ceb21d9063ff56fe8bf4";
 
   src = fetchFromGitHub {
     owner = "block";
     repo = "buzz";
     inherit rev;
-    hash = "sha256-9WJ6q64x8rW6vPNi5qay9oHdPjaPMzmELLPF31aWBeM=";
+    hash = "sha256-w/CHknkyFT+iHv4jd5Anv1Q/5kOZ7H1DEKB9dwqQHiE=";
   };
 
   # Root workspace Cargo.lock, vendored with fetchCargoVendor. importCargoLock
   # cannot handle this lock: it carries sqlx-core 0.9.0 twice (crates.io and
   # the launchbadge/sqlx fork pinned via [patch.crates-io]) and names vendor
   # directories by name-version only.
-  cargoHash = "sha256-TOJmGcR2HHrO1MDLH4ALmETG1s07VN0ZLwJcSuJYLdY=";
+  cargoHash = "sha256-A/lpudjM3ZahSNiWHxW8UKFlBhdBuAEQL87c8Q+C7Q4=";
 
   # desktop/src-tauri/Cargo.lock, also vendored with fetchCargoVendor: the
   # outputHashes importCargoLock needs are keyed by git dependency names that
   # move with upstream, which the updater cannot track.
-  desktopCargoHash = "sha256-ILrm3qcFmU0OVhSHZWi1vA6sG742wn5rFymv9ig3s4M=";
+  desktopCargoHash = "sha256-GQoRKRv0eM94ckLPBsMWHwA3tPqpThm8ZDv0DL4RUZQ=";
 
   # pnpm store hashes for the two workspaces built from this checkout. They
   # follow the pin, so they live here rather than in the packages, where the
