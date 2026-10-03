@@ -31,6 +31,10 @@ let
         git config remote.origin.promisor true
         git config remote.origin.partialclonefilter blob:none
 
+        # nixbot's mkEffect setup hook writes the state API auth header into
+        # $PWD, the checkout; unused here and it dirties the tree
+        rm hercules-ci.headers
+
         ${command}
       '';
     };
