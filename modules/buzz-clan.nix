@@ -6,7 +6,7 @@ self:
   manifest = {
     name = "buzz";
     description = "self-hosted Buzz relay plus preconfigured desktop clients";
-    categories = [ "Web Services" ];
+    categories = [ "Network" ];
     readme = builtins.readFile ./buzz-clan.md;
   };
 
