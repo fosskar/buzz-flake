@@ -110,6 +110,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     xdotool
   ];
 
+  # compositing is disabled in preFixup, and webkitgtk aborts in startViewTransition without it
+  postPatch = ''
+    substituteInPlace desktop/src/app/communityViewTransition.ts \
+      --replace-fail 'if (!document.startViewTransition) {' 'if (true) {'
+  '';
+
   dontUseCmakeConfigure = true;
 
   env = {
