@@ -3,7 +3,10 @@ self: system:
 # Evaluation-only smoke test: build a machine that enables the module with the
 # minimum required settings.
 {
-  imports = [ self.nixosModules.buzz-server ];
+  imports = [
+    self.nixosModules.buzz-server
+    self.nixosModules.buzz
+  ];
 
   boot.loader.grub.devices = [ "/dev/sda" ];
   fileSystems."/" = {
@@ -16,6 +19,11 @@ self: system:
     relayUrl = "wss://buzz.example.com";
     s3.endpoint = "https://s3.example.com";
     environmentFile = "/run/secrets/buzz-relay.env";
+  };
+
+  programs.buzz = {
+    enable = true;
+    app = "buzz-app";
   };
 
   system.stateVersion = "25.11";

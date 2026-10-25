@@ -57,6 +57,7 @@
 
       nixosModules = {
         buzz-server = import ./modules/buzz-server.nix self;
+        buzz = import ./modules/buzz.nix self;
         default = self.nixosModules.buzz-server;
       };
 

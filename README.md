@@ -24,6 +24,18 @@ share local inference with relay members. Set the package argument
 `withMeshLlm = false` to build the feature-off stubs instead. Its wrapper exposes
 the GCC and Vulkan libraries required by Mesh-LLM's downloaded native runtime.
 
+## Desktop app module
+
+`nixosModules.buzz` installs one of the desktop apps. `programs.buzz.app` picks
+`buzz-desktop` (Buzz 0.X, the default) or `buzz-app` (Buzz 1.0 beta).
+
+```nix
+programs.buzz = {
+  enable = true;
+  app = "buzz-app";
+};
+```
+
 ## NixOS module
 
 ```nix
