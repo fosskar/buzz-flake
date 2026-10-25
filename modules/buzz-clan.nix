@@ -264,29 +264,45 @@ self:
   roles.client = {
     description = "Buzz desktop app, pointed at this instance's relay";
 
+    interface.options.app = lib.mkOption {
+      type = lib.types.enum [
+        "buzz-desktop"
+        "buzz-app"
+      ];
+      default = "buzz-desktop";
+      description = "Desktop app to install: `buzz-desktop` (Buzz 0.X) or `buzz-app` (Buzz 1.0 beta).";
+    };
+
     perInstance =
-      { roles, ... }:
+      { roles, settings, ... }:
       {
         nixosModule =
           { pkgs, lib, ... }:
           let
             servers = lib.attrValues roles.server.machines;
             relayUrl = (lib.head servers).settings.relayUrl;
+            packages = self.packages.${pkgs.stdenv.hostPlatform.system};
 
             # BUZZ_RELAY_URL is the app's runtime default-relay override
             # (desktop/src-tauri/src/relay.rs); set-default keeps a user
             # environment override working.
             buzz-desktop-configured = pkgs.symlinkJoin {
               name = "buzz-desktop-configured";
-              paths = [ self.packages.${pkgs.stdenv.hostPlatform.system}.buzz-desktop ];
+              paths = [ packages.buzz-desktop ];
               nativeBuildInputs = [ pkgs.makeWrapper ];
               postBuild = ''
                 wrapProgram "$out/bin/buzz-desktop" \
                   --set-default BUZZ_RELAY_URL ${lib.escapeShellArg relayUrl}
               '';
             };
+
+            # buzz-app has no runtime relay override; its default community is
+            # embedded at build time.
+            buzz-app-configured = packages.buzz-app.override { defaultCommunityUrl = relayUrl; };
           in
           {
+            imports = [ self.nixosModules.buzz ];
+
             assertions = [
               {
                 assertion = lib.length servers == 1;
@@ -294,7 +310,11 @@ self:
               }
             ];
 
-            environment.systemPackages = [ buzz-desktop-configured ];
+            programs.buzz = {
+              enable = true;
+              inherit (settings) app;
+              package = if settings.app == "buzz-app" then buzz-app-configured else buzz-desktop-configured;
+            };
           };
       };
   };
