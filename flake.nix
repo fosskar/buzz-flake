@@ -49,6 +49,7 @@
             buzz-relay
             buzz-sidecars
             buzz-desktop
+            buzz-app
             ;
           default = scope.buzz-relay;
         }

@@ -12,6 +12,7 @@ NixOS, Home Manager, and Clan modules.
 | `buzz-web` | The `web` and `admin-web` static bundles the relay serves |
 | `buzz-sidecars` | `buzz-acp`, `buzz-agent`, `buzz-backend-kubernetes`, `buzz-dev-mcp`, `git-credential-nostr` and `buzz` |
 | `buzz-desktop` | The Tauri desktop app, with the sidecar binaries bundled |
+| `buzz-app` | The Buzz 1.0 beta desktop app from [block/buzz-app](https://github.com/block/buzz-app), with `goose-acp` bundled |
 
 ```console
 nix run github:fosskar/buzz-flake#buzz-desktop
