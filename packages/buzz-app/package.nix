@@ -67,14 +67,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   dontUseCmakeConfigure = true;
 
-  # The upstream beforeBuildCommand clones and compiles goose; the prebuilt
-  # goose-acp is staged below instead. The version is what release.yml injects.
+  # The upstream beforeBuildCommand downloads a prebuilt goose-acp; the one
+  # built from source is staged below instead. The version is what release.yml
+  # injects.
   tauriBuildFlags = [
     "--config"
     (writeText "tauri.nix.conf.json" (
       builtins.toJSON {
         inherit (finalAttrs) version;
-        build.beforeBuildCommand = "pnpm build";
+        build.beforeBuildCommand = "node scripts/build-agent-command.mjs && pnpm build";
       }
     ))
   ];
@@ -95,6 +96,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   doCheck = false;
 
+  passthru.goose-acp = buzz-app-goose-acp;
+
   # The bundled entry ships an empty `Categories=`, as buzz-desktop's does.
   postInstall = ''
     substituteInPlace "$out/share/applications/Buzz Foundation.desktop" \
@@ -103,6 +106,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   meta = buzz-app-source.meta // {
     description = "Buzz 1.0 desktop app (beta)";
-    mainProgram = "buzz-foundation";
+    mainProgram = "Buzz";
   };
 })

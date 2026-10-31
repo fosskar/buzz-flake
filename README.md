@@ -174,10 +174,13 @@ nix flake check                            # formatting + NixOS module evaluatio
 
 `packages/buzz-desktop/update.sh` moves the pin to the newest `desktop-v*`
 release and refreshes the hashes that follow from it (`src`, both pnpm stores).
-A nixbot schedule runs it through nixfiles' updater, which opens one PR for the
-whole flake; run it by hand with `./packages/buzz-desktop/update.sh`.
+`packages/buzz-app/update.sh` does the same for `buzz-app`: it moves the
+`block/buzz-app` pin to the newest `desktop-vX.Y.Z` tag (no betas or
+previews), follows its goose pin, and refreshes all its hashes. A nixbot
+schedule runs both through nixfiles' updater, which opens one PR for the
+whole flake; run them by hand with `./packages/<name>/update.sh`.
 
-Two hashes it deliberately leaves alone, because neither can be derived on one
+Two hashes `packages/buzz-desktop/update.sh` deliberately leaves alone, because neither can be derived on one
 builder:
 
 - `cargoHash` (root workspace) and `desktopCargoOutputHashes` (Tauri

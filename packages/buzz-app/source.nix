@@ -1,28 +1,28 @@
 { lib, fetchFromGitHub }:
 
 # Pinned block/buzz-app checkout plus the goose revision it bundles as
-# goose-acp. Upstream only publishes `v0.0.0-preview.N.M` prereleases cut from
-# main, so `version` is the preview number of the pinned release.
+# goose-acp. `version` is the newest `desktop-vX.Y.Z` tag; update.sh skips
+# betas and the `v*-preview.N.M` prereleases cut from main.
 rec {
-  version = "0.0.0-preview.166.1";
+  version = "0.7.4";
 
-  rev = "11386c508611acd6ceb19ccfc748365bf42466a8";
+  rev = "1c0f6d68ae11d834f6ac8a9287b3b983cc967275";
 
   src = fetchFromGitHub {
     owner = "block";
     repo = "buzz-app";
     inherit rev;
-    hash = "sha256-dR89XGAiQP8HoiKjsByb4rAhlwY/i86f4XZyPPc0smo=";
+    hash = "sha256-mUF3MH1U+2rqHOJ+KdhI+hyKBz91lVfI1h+HAhJcTwI=";
   };
 
-  cargoHash = "sha256-n520zYtBxJQdEP8eBmH3ZjMi/YHnjHyiZ5wx5NlGkXQ=";
-  pnpmHash = "sha256-VnxI+dQkYdwogfn7/AZAtUo/xA0xhldcn4GHTmLl6RI=";
+  cargoHash = "sha256-U6lImiMmyLKfT3pR0AEaZFPUtzCLft3M/b57eAboI28=";
+  pnpmHash = "sha256-J+1ZWbbgM0QZnHcoqFBfcXqJcqAxR760qhYKkJMTC/k=";
 
   # runtime/goose-acp.json in the pinned checkout
   goose = {
-    rev = "122834086b62ae39adf721de32ae59fcde904a8c";
-    hash = "sha256-77LzSliHMESH4ugC5htM1SZcrNl6Oot1ZdDNjK8P2LE=";
-    cargoHash = "sha256-DeSArRlTkWYNzcPr7iCpV1S+6V3uiEcIfKHT7ipk/O4=";
+    rev = "30bba95105e59bc3e7df624cf6b4d433690cfe12";
+    hash = "sha256-hFW9gcuYFyyXOU/tB2v5WVNlX9arMG0Qs5qMb+KRmqw=";
+    cargoHash = "sha256-jVgT8mYFX0KHjcpmK6TbshElXkLpNKgZoZz1JXXi0mk=";
   };
 
   meta = {
