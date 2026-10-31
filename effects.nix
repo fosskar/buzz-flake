@@ -29,8 +29,9 @@ _args: {
     outputs.effects.update-flake-inputs = mkUpdateEffect "update-flake-inputs" "flake-inputs";
   };
 
-  # packages/buzz-desktop/update.sh moves the shared upstream pin, so this
-  # opens one PR for the whole flake.
+  # packages/buzz-desktop/update.sh moves the shared block/buzz pin and
+  # packages/buzz-app/update.sh the block/buzz-app pin; the updater groups
+  # both buzz-* packages into one PR.
   onSchedule.update-pkgs = {
     when = {
       hour = 3;

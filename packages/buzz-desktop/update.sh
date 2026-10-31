@@ -3,8 +3,8 @@
 # shellcheck shell=bash
 #
 # Moves the shared upstream pin to the newest `desktop-v*` release and
-# refreshes the hashes that follow from it. Every package in this flake is cut
-# from that one commit, so this is the only package updater the repo needs.
+# refreshes the hashes that follow from it. Every package in this flake except
+# buzz-app is cut from that one commit; buzz-app has its own update.sh.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
