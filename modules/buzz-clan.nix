@@ -296,9 +296,6 @@ self:
               '';
             };
 
-            # buzz-app has no runtime relay override; its default community is
-            # embedded at build time.
-            buzz-app-configured = packages.buzz-app.override { defaultCommunityUrl = relayUrl; };
           in
           {
             imports = [ self.nixosModules.buzz ];
@@ -313,7 +310,9 @@ self:
             programs.buzz = {
               enable = true;
               inherit (settings) app;
-              package = if settings.app == "buzz-app" then buzz-app-configured else buzz-desktop-configured;
+              # buzz-app stays unconfigured: its only relay setting is a build-time
+              # preselect, and baking it in would miss the binary cache
+              package = if settings.app == "buzz-app" then packages.buzz-app else buzz-desktop-configured;
             };
           };
       };

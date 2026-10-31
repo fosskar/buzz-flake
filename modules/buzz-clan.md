@@ -63,6 +63,7 @@ the app and stored in the user's keyring.
 
 `buzz-desktop` gets `BUZZ_RELAY_URL` through a wrapper, so the app offers this
 instance's relay instead of the upstream default; a user-set `BUZZ_RELAY_URL`
-still wins. `buzz-app` has no runtime override: the relay is embedded at build
-time as the community a fresh install opens with, so the client machines build
-that variant from source instead of using a cached `buzz-app`.
+still wins. `buzz-app` is installed unconfigured, so it comes from the binary
+cache: its only relay setting is a build-time preselect
+(`defaultCommunityUrl`) for a fresh install. Join the relay once in the app with
+**Join a community**.
