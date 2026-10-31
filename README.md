@@ -12,7 +12,7 @@ NixOS, Home Manager, and Clan modules.
 | `buzz-web` | The `web` and `admin-web` static bundles the relay serves |
 | `buzz-sidecars` | `buzz-acp`, `buzz-agent`, `buzz-backend-kubernetes`, `buzz-dev-mcp`, `git-credential-nostr` and `buzz` |
 | `buzz-desktop` | The Tauri desktop app, with the sidecar binaries bundled |
-| `buzz-app` | The Buzz 1.0 beta desktop app from [block/buzz-app](https://github.com/block/buzz-app), with `goose-acp` bundled |
+| `buzz-app` | The Buzz 1.0 beta desktop app from [block/buzz-app](https://github.com/block/buzz-app), with `goose-acp` and `buzz-agent-command` bundled |
 
 ```console
 nix run github:fosskar/buzz-flake#buzz-desktop
@@ -172,20 +172,18 @@ nix flake check                            # formatting + NixOS module evaluatio
 
 ## Updating
 
-`packages/buzz-desktop/update.sh` moves the pin to the newest `desktop-v*`
-release and refreshes the hashes that follow from it (`src`, both pnpm stores).
-`packages/buzz-app/update.sh` does the same for `buzz-app`: it moves the
-`block/buzz-app` pin to the newest `desktop-vX.Y.Z` tag (no betas or
-previews), follows its goose pin, and refreshes all its hashes. A nixbot
-schedule runs both through nixfiles' updater, which opens one PR for the
-whole flake; run them by hand with `./packages/<name>/update.sh`.
+Two scripts move the upstream pins and refresh every hash that follows from
+them:
 
-Two hashes `packages/buzz-desktop/update.sh` deliberately leaves alone, because neither can be derived on one
-builder:
+- `packages/buzz-desktop/update.sh` moves the shared `block/buzz` pin, used by
+  every package except `buzz-app`, to the newest `desktop-v*` release.
+- `packages/buzz-app/update.sh` moves the `block/buzz-app` pin to the newest
+  `desktop-vX.Y.Z` tag (no betas or previews) and follows its goose pin.
 
-- `cargoHash` (root workspace) and `desktopCargoOutputHashes` (Tauri
-  workspace) in `packages/buzz-desktop/source.nix` — the build fails loudly
-  with the correct hash
-- the `sherpa-onnx` archive version and hashes in
-  `packages/buzz-desktop/package.nix` — the script refuses the bump when
-  `sherpa-onnx-sys` moves in the lockfile
+A nixbot schedule runs both through nixfiles' updater, which opens one PR for
+the whole flake; run them by hand with `./packages/<name>/update.sh`.
+
+The `sherpa-onnx` archive version and hashes in
+`packages/buzz-desktop/package.nix` stay manual, because the two per-platform
+hashes cannot be derived on one builder. The desktop script refuses the bump
+when `sherpa-onnx-sys` moves in the lockfile.
