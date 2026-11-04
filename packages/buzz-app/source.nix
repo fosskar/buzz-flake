@@ -4,18 +4,18 @@
 # goose-acp. `version` is the newest `desktop-vX.Y.Z` tag; update.sh skips
 # betas and the `v*-preview.N.M` prereleases cut from main.
 rec {
-  version = "0.7.7";
+  version = "0.7.8";
 
-  rev = "2da58c2b3b9a2a52bac9c7fab82f40b1d464e5b2";
+  rev = "48bea39c89249917574dad33663a1039dc7f5cf5";
 
   src = fetchFromGitHub {
     owner = "block";
     repo = "buzz-app";
     inherit rev;
-    hash = "sha256-buzb1KxpBOI5hmcRdbmpNVNS9HA0fxEaUD6W89RD2Z4=";
+    hash = "sha256-L6IRSa5prmUHOdClfYBLYG1c+paKXZEd4woD5tW9hsk=";
   };
 
-  cargoHash = "sha256-HtPOGbbY/QZfSEeg96pNh1FOTv+/VR/esCbF2G8Ml90=";
+  cargoHash = "sha256-R81qkDLinyMMhvthgiiMukBd3oaJ6QKU8d7r8YTTKEA=";
   pnpmHash = "sha256-6XU133FO7eoAIDPvq823RnCBvpuvzZr6oSU3O/3CiV0=";
 
   # runtime/goose-acp.json in the pinned checkout
