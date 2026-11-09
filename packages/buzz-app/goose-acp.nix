@@ -4,12 +4,15 @@
   rustPlatform,
   fetchFromGitHub,
   buzz-app-source,
+  aws-lc,
   cmake,
   pkg-config,
   protobuf,
   dbus,
   libxcb,
   openssl,
+  sqlite,
+  zstd,
 }:
 
 # goose-acp as scripts/build-goose-acp.mjs builds it from runtime/goose-acp.json:
@@ -46,8 +49,11 @@ rustPlatform.buildRustPackage {
   ];
 
   buildInputs = [
+    aws-lc
     dbus
     openssl
+    sqlite
+    zstd
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [ libxcb ];
 
