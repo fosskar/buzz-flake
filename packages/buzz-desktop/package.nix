@@ -15,6 +15,7 @@
   perl,
   wrapGAppsHook3,
   alsa-lib,
+  aws-lc,
   glib-networking,
   gst_all_1,
   gtk3,
@@ -22,6 +23,7 @@
   libopus,
   libsoup_3,
   openssl,
+  sqlite,
   webkitgtk_4_1,
   xdotool,
   vulkan-loader,
@@ -91,6 +93,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   buildInputs = [
     alsa-lib
+    aws-lc
     glib-networking
     # webkitgtk resolves its media pipeline through the plugin registry at
     # runtime; without these the web process finds no appsink/appsrc and the
@@ -106,6 +109,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     libopus
     libsoup_3
     openssl
+    sqlite
     webkitgtk_4_1
     xdotool
   ];

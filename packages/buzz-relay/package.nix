@@ -1,6 +1,7 @@
 {
   lib,
   rustPlatform,
+  aws-lc,
   buzz-source,
   buzz-web,
   cmake,
@@ -28,7 +29,10 @@ rustPlatform.buildRustPackage (_finalAttrs: {
     makeWrapper
   ];
 
-  buildInputs = [ openssl ];
+  buildInputs = [
+    aws-lc
+    openssl
+  ];
 
   # cmake is only used by dependency build scripts; the workspace itself is
   # plain cargo, so the cmake setup hook must not try to configure the source.

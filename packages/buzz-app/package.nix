@@ -12,6 +12,7 @@
   pkg-config,
   cmake,
   wrapGAppsHook3,
+  aws-lc,
   dbus,
   glib-networking,
   gst_all_1,
@@ -19,6 +20,7 @@
   libayatana-appindicator,
   libsoup_3,
   openssl,
+  sqlite,
   webkitgtk_4_1,
   # Community a fresh install opens with; vite embeds it at build time
   # (`BUZZ_DEFAULT_COMMUNITY_URL` in vite.config.ts), so setting it rebuilds.
@@ -49,6 +51,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   buildInputs = [
+    aws-lc
     dbus
     glib-networking
     # webkitgtk resolves its media pipeline through the plugin registry at
@@ -62,6 +65,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     libayatana-appindicator
     libsoup_3
     openssl
+    sqlite
     webkitgtk_4_1
   ];
 

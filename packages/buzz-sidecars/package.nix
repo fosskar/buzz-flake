@@ -1,5 +1,6 @@
 {
   rustPlatform,
+  aws-lc,
   buzz-source,
   cmake,
   pkg-config,
@@ -23,7 +24,10 @@ rustPlatform.buildRustPackage (_finalAttrs: {
     protobuf
   ];
 
-  buildInputs = [ openssl ];
+  buildInputs = [
+    aws-lc
+    openssl
+  ];
 
   dontUseCmakeConfigure = true;
 
