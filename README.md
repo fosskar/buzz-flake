@@ -23,6 +23,8 @@ The desktop build enables the `mesh-llm` feature so **Settings → Compute** can
 share local inference with relay members. Set the package argument
 `withMeshLlm = false` to build the feature-off stubs instead. Its wrapper exposes
 the GCC and Vulkan libraries required by Mesh-LLM's downloaded native runtime.
+`buzz-app` always includes Mesh-LLM (**Shared compute**), and its wrapper exposes
+the same libraries.
 
 ## Desktop app module
 

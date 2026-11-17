@@ -1,5 +1,6 @@
 {
   lib,
+  stdenv,
   rustPlatform,
   writeText,
   buzz-app-source,
@@ -21,6 +22,7 @@
   libsoup_3,
   openssl,
   sqlite,
+  vulkan-loader,
   webkitgtk_4_1,
   # Community a fresh install opens with; vite embeds it at build time
   # (`BUZZ_DEFAULT_COMMUNITY_URL` in vite.config.ts), so setting it rebuilds.
@@ -99,6 +101,19 @@ rustPlatform.buildRustPackage (finalAttrs: {
   '';
 
   doCheck = false;
+
+  # mesh-llm downloads a prebuilt llama.cpp runtime to ~/.cache/mesh-llm whose
+  # libraries only search $ORIGIN for libstdc++, libgomp and libvulkan.
+  preFixup = ''
+    gappsWrapperArgs+=(
+      --prefix LD_LIBRARY_PATH : "${
+        lib.makeLibraryPath [
+          stdenv.cc.cc.lib
+          vulkan-loader
+        ]
+      }"
+    )
+  '';
 
   passthru.goose-acp = buzz-app-goose-acp;
 
