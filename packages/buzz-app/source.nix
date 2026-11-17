@@ -4,25 +4,25 @@
 # goose-acp. `version` is the newest `desktop-vX.Y.Z` tag; update.sh skips
 # betas and the `v*-preview.N.M` prereleases cut from main.
 rec {
-  version = "1.0.3";
+  version = "1.0.4";
 
-  rev = "e69b6f9eecf94988034b4d8d5ad78209ed627208";
+  rev = "a1c9c96940d2a6c81fce9beed9b7cbcc34b144b8";
 
   src = fetchFromGitHub {
     owner = "block";
     repo = "buzz-app";
     inherit rev;
-    hash = "sha256-p/E2wtNvWYN+QKNVlooYEmeAt//+W0d1oGg26rK6PyU=";
+    hash = "sha256-da336y05Fpe1NgE0rbcHHSIFsH8EEcdBCQzrAn+34rU=";
   };
 
-  cargoHash = "sha256-yYpqaWYUHZa61tdoyEU0P7OHbVrcR50X/PAA/+lHzBI=";
-  pnpmHash = "sha256-hTPwJ69mfaZ27ASZw7gF8LiS7Gpy7D1hv8Jg3DbNIdY=";
+  cargoHash = "sha256-cCkzcprPM1OFu521KQdxc0+puxuOeoD3CMXb3dahQWE=";
+  pnpmHash = "sha256-Dur+QkaPDfSR4VejxN0si0Rxtt1b+/yeYj1ibdqdRAY=";
 
   # runtime/goose-acp.json in the pinned checkout
   goose = {
-    rev = "e62a656f460d6399b34c747014d810727ff70b05";
-    hash = "sha256-GmL5+YRVZarlDRqewIeWB8mcVdpOKRsVwUEankgZXgY=";
-    cargoHash = "sha256-GM+FGE7g3gA8ZP//CDrVYAq4C39AOFcLz+baOQv/Qv0=";
+    rev = "9da692fde8ac69ec385b5e7d68b92cc7101a509a";
+    hash = "sha256-CacWGZMgmV1K2/FImZCVP3bs9svK8DVaU9nekm7VEg4=";
+    cargoHash = "sha256-DdSR+Iy4DodOREvnZfB6+F5WYv7FLv8IdZom215Tmco=";
   };
 
   meta = {
