@@ -21,10 +21,7 @@ self: system:
     environmentFile = "/run/secrets/buzz-relay.env";
   };
 
-  programs.buzz = {
-    enable = true;
-    app = "buzz-app";
-  };
+  programs.buzz.enable = true;
 
   system.stateVersion = "25.11";
 

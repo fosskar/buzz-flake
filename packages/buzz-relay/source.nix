@@ -1,7 +1,7 @@
 { lib, fetchFromGitHub }:
 
-# Single pinned upstream checkout shared by every buzz package. `version` is the
-# desktop release version; the relay is cut from the same commit.
+# Single pinned block/buzz checkout shared by every package except buzz-app.
+# `version` is the newest `desktop-v*` release; the relay is cut from that commit.
 rec {
   version = "0.5.30";
 
@@ -20,15 +20,8 @@ rec {
   # directories by name-version only.
   cargoHash = "sha256-pYCis8LXLUKU3iPaUkeR/hH3XmBljCjVZQ7EDD2cqrs=";
 
-  # desktop/src-tauri/Cargo.lock, also vendored with fetchCargoVendor: the
-  # outputHashes importCargoLock needs are keyed by git dependency names that
-  # move with upstream, which the updater cannot track.
-  desktopCargoHash = "sha256-NWtKer5P3o+csM+wsvSR2b8cZQFl78nldGEqHHqCGyU=";
-
-  # pnpm store hashes for the two workspaces built from this checkout. They
-  # follow the pin, so they live here rather than in the packages, where the
-  # updater would not be allowed to rewrite them.
-  desktopPnpmHash = "sha256-2tYG0tivzvVaFxdxCenzSxCui2sVA/HiSINyvQCCgwU=";
+  # pnpm store hash for the web workspace. It follows the pin, so it lives here
+  # rather than in buzz-web, where the updater would not be allowed to rewrite it.
   webPnpmHash = "sha256-NazTNHuM4wJqnMHKJbviuIYW8o0YZND50DESrdQNsM4=";
 
   meta = {

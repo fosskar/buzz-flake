@@ -117,7 +117,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   passthru.goose-acp = buzz-app-goose-acp;
 
-  # The bundled entry ships an empty `Categories=`, as buzz-desktop's does.
+  # The bundled entry ships an empty `Categories=`, which leaves the app
+  # unsorted in application menus.
   postInstall = ''
     substituteInPlace "$out/share/applications/Buzz Foundation.desktop" \
       --replace-fail 'Categories=' 'Categories=Network;InstantMessaging;Chat;'

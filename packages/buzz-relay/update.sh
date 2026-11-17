@@ -42,19 +42,6 @@ sed -i \
   -e "s|^\([[:space:]]*\)hash = \".*\";|\1hash = \"$src_hash\";|" \
   "$source_nix"
 
-src="$(nix eval --raw "$REPO_ROOT#buzz-desktop.src")"
-
-# sherpa-onnx-sys downloads a prebuilt archive keyed by its own version, and
-# the two per-platform hashes cannot be derived on one builder. Refuse the bump
-# instead of leaving a pin that no longer matches the lockfile.
-locked_sherpa="$(sed -n '/^name = "sherpa-onnx-sys"$/{n;s/^version = "\(.*\)"$/\1/p;}' \
-  "$src/desktop/src-tauri/Cargo.lock")"
-pinned_sherpa="$(sed -n 's/^[[:space:]]*sherpaVersion = "\(.*\)";.*/\1/p' "$SCRIPT_DIR/package.nix")"
-if [[ $locked_sherpa != "$pinned_sherpa" ]]; then
-  echo "buzz-desktop: sherpa-onnx moved $pinned_sherpa -> $locked_sherpa; update sherpaVersion and both archive hashes by hand" >&2
-  exit 1
-fi
-
 # Fixed-output rebuild: plant a wrong hash, read the real one off the failure.
 # All dependency hashes live in source.nix, the one file this updater owns.
 set_hash() {
@@ -75,8 +62,6 @@ refresh_hash() {
 }
 
 refresh_hash cargoHash buzz-relay.cargoDeps
-refresh_hash desktopCargoHash buzz-desktop.cargoDeps
-refresh_hash desktopPnpmHash buzz-desktop.pnpmDeps
 refresh_hash webPnpmHash buzz-web.pnpmDeps
 
 echo ":: buzz $current -> $latest"

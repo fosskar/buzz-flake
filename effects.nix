@@ -29,7 +29,7 @@ _args: {
     outputs.effects.update-flake-inputs = mkUpdateEffect "update-flake-inputs" "flake-inputs";
   };
 
-  # packages/buzz-desktop/update.sh moves the shared block/buzz pin and
+  # packages/buzz-relay/update.sh moves the shared block/buzz pin and
   # packages/buzz-app/update.sh the block/buzz-app pin; the updater groups
   # both buzz-* packages into one PR.
   onSchedule.update-pkgs = {

@@ -1,7 +1,8 @@
 # buzz-flake
 
-Nix packaging for [block/buzz](https://github.com/block/buzz): the desktop app,
-the self-hosted relay and pairing servers, always-on community agents, and
+Nix packaging for [block/buzz](https://github.com/block/buzz) and
+[block/buzz-app](https://github.com/block/buzz-app): the desktop app, the
+self-hosted relay and pairing servers, always-on community agents, and
 NixOS, Home Manager, and Clan modules.
 
 ## Packages
@@ -11,31 +12,24 @@ NixOS, Home Manager, and Clan modules.
 | `buzz-relay` | `buzz-relay` with `git` on `PATH` and the web bundles preconfigured, plus `buzz-admin` and `buzz-pair-relay` |
 | `buzz-web` | The `web` and `admin-web` static bundles the relay serves |
 | `buzz-sidecars` | `buzz-acp`, `buzz-agent`, `buzz-backend-kubernetes`, `buzz-dev-mcp`, `git-credential-nostr` and `buzz` |
-| `buzz-desktop` | The Tauri desktop app, with the sidecar binaries bundled |
 | `buzz-app` | The Buzz 1.0 beta desktop app from [block/buzz-app](https://github.com/block/buzz-app), with `goose-acp` and `buzz-agent-command` bundled |
 
 ```console
-nix run github:fosskar/buzz-flake#buzz-desktop
+nix run github:fosskar/buzz-flake#buzz-app
 nix build github:fosskar/buzz-flake#buzz-relay
 ```
 
-The desktop build enables the `mesh-llm` feature so **Settings → Compute** can
-share local inference with relay members. Set the package argument
-`withMeshLlm = false` to build the feature-off stubs instead. Its wrapper exposes
-the GCC and Vulkan libraries required by Mesh-LLM's downloaded native runtime.
-`buzz-app` always includes Mesh-LLM (**Shared compute**), and its wrapper exposes
-the same libraries.
+`buzz-app` includes Mesh-LLM, so **Shared compute** can share local inference
+with relay members. Its wrapper exposes the GCC and Vulkan libraries required by
+Mesh-LLM's downloaded native runtime; GPU inference also needs
+`hardware.graphics.enable = true`.
 
 ## Desktop app module
 
-`nixosModules.buzz` installs one of the desktop apps. `programs.buzz.app` picks
-`buzz-desktop` (Buzz 0.X, the default) or `buzz-app` (Buzz 1.0 beta).
+`nixosModules.buzz` installs `buzz-app`; `programs.buzz.package` overrides it.
 
 ```nix
-programs.buzz = {
-  enable = true;
-  app = "buzz-app";
-};
+programs.buzz.enable = true;
 ```
 
 ## NixOS module
@@ -177,15 +171,10 @@ nix flake check                            # formatting + NixOS module evaluatio
 Two scripts move the upstream pins and refresh every hash that follows from
 them:
 
-- `packages/buzz-desktop/update.sh` moves the shared `block/buzz` pin, used by
+- `packages/buzz-relay/update.sh` moves the shared `block/buzz` pin, used by
   every package except `buzz-app`, to the newest `desktop-v*` release.
 - `packages/buzz-app/update.sh` moves the `block/buzz-app` pin to the newest
   `desktop-vX.Y.Z` tag (no betas or previews) and follows its goose pin.
 
 A nixbot schedule runs both through nixfiles' updater, which opens one PR for
 the whole flake; run them by hand with `./packages/<name>/update.sh`.
-
-The `sherpa-onnx` archive version and hashes in
-`packages/buzz-desktop/package.nix` stay manual, because the two per-platform
-hashes cannot be derived on one builder. The desktop script refuses the bump
-when `sherpa-onnx-sys` moves in the lockfile.

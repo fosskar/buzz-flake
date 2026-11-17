@@ -54,16 +54,9 @@ clients.
 
 ## `client` role
 
-Installs a desktop app pointed at the server's `relayUrl`. The role expects
-exactly one server machine. Identity keys are not managed: they are created in
-the app and stored in the user's keyring.
+Installs `buzz-app`. Identity keys are not managed: they are created in the app
+and stored in the user's keyring.
 
-- `app`: `buzz-desktop` (Buzz 0.X) or `buzz-app` (Buzz 1.0 beta). Defaults to
-  `buzz-desktop`.
-
-`buzz-desktop` gets `BUZZ_RELAY_URL` through a wrapper, so the app offers this
-instance's relay instead of the upstream default; a user-set `BUZZ_RELAY_URL`
-still wins. `buzz-app` is installed unconfigured, so it comes from the binary
-cache: its only relay setting is a build-time preselect
-(`defaultCommunityUrl`) for a fresh install. Join the relay once in the app with
-**Join a community**.
+`buzz-app` is installed unconfigured, so it comes from the binary cache: its
+only relay setting is a build-time preselect (`defaultCommunityUrl`) for a fresh
+install. Join the relay once in the app with **Join a community**.
